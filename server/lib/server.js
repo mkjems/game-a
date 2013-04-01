@@ -1,5 +1,4 @@
 var express = require('express'),
-    app = express(),
     path = require('path');
 
 var config = {

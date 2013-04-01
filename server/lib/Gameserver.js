@@ -8,6 +8,11 @@ var io,
     _ = require('../node_modules/lodash'),
     mainLoop;
 
+function getConnectionId(){
+    counter++;
+    return counter;
+}
+
 function removePlayer(player) {
     connections = _.without(connections, player);
 }
@@ -89,7 +94,7 @@ exports.create = function(server) {
     io.set('log level', 2);
 
     io.sockets.on('connection', function(socket) {
-        var id = counter++;
+        var id = 'player_' + getConnectionId();
         var player = Connection.create(socket, id, bullets, collisions);
         connections.push(player);
 

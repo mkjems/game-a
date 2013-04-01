@@ -44,9 +44,14 @@ $(document).ready(function(){
     var keys = require('./keys');
     keys.listen(socket);
 
+    function writeMyId(id){
+        $('.myId').text(id);
+    }
+
     socket.on('first briefing', function(data) {
         console.log('first briefing', data);
         myId = data.myId;
+        writeMyId(myId);
     });
 
     socket.on('new world', function(data) {
