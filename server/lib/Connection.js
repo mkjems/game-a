@@ -4,11 +4,10 @@
  *
  */
 
-exports.create = function(socket, playerId, bullets) {
+exports.create = function(socket, playerId, bullets, collisions) {
 
-    var gun = require('./Gun').create(playerId, socket);
-
-    var cowboy = require('./Cowboy').create(playerId);
+    var cowboy = require('./Cowboy').create(playerId, collisions);
+    var gun = require('./Gun').create(playerId, socket, cowboy.getFaceOrientation, collisions);
 
     var keys = {
         a: 'up',
@@ -16,7 +15,9 @@ exports.create = function(socket, playerId, bullets) {
         w: 'up',
         s: 'up',
         space: 'up',
-        l: 'up'
+        l: 'up',
+        k: 'up',
+        m: 'up'
     };
 
     function setWorld(world) {
@@ -33,24 +34,29 @@ exports.create = function(socket, playerId, bullets) {
         keys.s = data.s;
         keys.space = data.space;
         keys.l = data.l;
+        keys.k = data.k;
+        keys.m = data.m;
     });
+
 
     function moveOneTick() {
 
-        if (!gun.getIsReloading()) {
-            if (keys.a === 'down') {
-                cowboy.moveLeft();
-            }
-            if (keys.d === 'down') {
-                cowboy.moveRight();
-            }
-            if (keys.w === 'down') {
-                cowboy.moveUp();
-            }
-            if (keys.s === 'down') {
-                cowboy.moveDown();
-            }
+        var aStep = gun.getIsReloading() ? 0.5 : 4;
 
+        if (keys.a === 'down') {
+            cowboy.moveLeft(aStep);
+        }
+        if (keys.d === 'down') {
+            cowboy.moveRight(aStep);
+        }
+        if (keys.w === 'down') {
+            cowboy.moveUp(aStep);
+        }
+        if (keys.s === 'down') {
+            cowboy.moveDown(aStep);
+        }
+
+        if (!gun.getIsReloading()) {
             if (keys.space === 'down') { // fire a bullet!
                 var pos = cowboy.getPosition();
                 var bullet = gun.fireBullet(pos.x, pos.y);
@@ -63,6 +69,14 @@ exports.create = function(socket, playerId, bullets) {
                 console.log('Reload!');
                 gun.reloadGun();
             }
+
+            if (keys.k === 'down') { // Lift arm
+                gun.liftArm();
+            }
+
+            if (keys.m === 'down') { // Lower arm
+                gun.lowerArm();
+            }
         }
 
 
@@ -72,8 +86,12 @@ exports.create = function(socket, playerId, bullets) {
         setWorld: setWorld,
         id: playerId,
         getPosition: cowboy.getPosition,
+        getCollisionBody: cowboy.getCollisionBody,
         moveOneTick: moveOneTick,
-        getBulletCount: gun.getBulletCount
+        getBulletCount: gun.getBulletCount,
+        getArmRadian: gun.getArmRadian,
+        getFaceOrientation: cowboy.getFaceOrientation
+
     };
 
     return that;

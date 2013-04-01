@@ -1,48 +1,66 @@
 
-exports.create = function(playerId){
+exports.create = function(playerId, collisions){
 
-    var aStep = 5;
+    var minX = 5;
+    var minY = 5;
+    var maxX = 595;
+    var maxY = 395;
 
-    var minX = 0;
-    var minY = 0;
-    var maxX = 290;
-    var maxY = 290;
+    var faceOrientation = 'left';
 
     var position = {
         x: Math.round(300 * Math.random()),
         y: Math.round(300 * Math.random())
     };
 
-    function moveLeft(){
+    function moveLeft(aStep){
         position.x -= aStep;
         if (position.x < minX){
             position.x = minX;
         }
+        faceOrientation = 'left';
     }
 
-    function moveRight(){
+    function moveRight(aStep){
         position.x += aStep;
         if (position.x > maxX){
             position.x = maxX;
         }
+        faceOrientation = 'right';
     }
 
-    function moveUp(){
+    function moveUp(aStep){
         position.y -= aStep;
         if (position.y < minY){
             position.y = minY;
         }
     }
 
-    function moveDown(){
+    function moveDown(aStep){
         position.y += aStep;
         if (position.y > maxY){
             position.y = maxY;
         }
     }
 
+    function getFaceOrientation(){
+        return faceOrientation;
+    }
+
     function getPosition(){
         return position;
+    }
+
+    var collisionBody = require('./Collision-body').create(getPosition, [
+            {
+                x:0,
+                y:0,
+                radius: 10
+            }
+    ]);
+
+    function getCollisionBody(){
+        return collisionBody;
     }
 
     return {
@@ -50,7 +68,9 @@ exports.create = function(playerId){
         moveDown: moveDown,
         moveLeft: moveLeft,
         moveRight: moveRight,
-        getPosition: getPosition
-    }
+        getPosition: getPosition,
+        getFaceOrientation: getFaceOrientation,
+        getCollisionBody : getCollisionBody
+    };
 
-}
+};

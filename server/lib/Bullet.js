@@ -1,14 +1,16 @@
 
-exports.create = function(playerId, x, y, radian ){
+exports.create = function(playerId, x, y, radian, collisions ){
 
     var speed = 10;
-    var moves = 20;
+    var moves = 100;
+
     function moveOneTick(){
         if(moves>0){
             dx = Math.cos(radian) * speed;
             dy = Math.sin(radian) * speed;
             x+=dx;
             y+=dy;
+            var hits = collisions.testForCollisions(getCollisionBody());
             moves--;
         }
     }
@@ -18,9 +20,20 @@ exports.create = function(playerId, x, y, radian ){
             x:x,
             y:y,
             playerId: playerId,
-            sound: (moves === 19)? 'bang' : ''
+            sound: (moves === 99)? 'bang' : ''
         };
         return res;
+    }
+
+    var collisionBody = require('./Collision-body').create( getPosition, [{
+            x:0,
+            y:0,
+            radius:5
+        }
+    ]);
+
+    function getCollisionBody(){
+        return collisionBody;
     }
 
     that = {
@@ -28,7 +41,8 @@ exports.create = function(playerId, x, y, radian ){
         getPosition: getPosition,
         getMoves: function(){
             return moves;
-        }
+        },
+        getCollisionBody: getCollisionBody
     };
 
     return that;

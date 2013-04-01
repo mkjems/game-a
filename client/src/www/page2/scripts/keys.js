@@ -4,7 +4,9 @@ var stateOfKeys = {
     d: 'up',
     w: 'up',
     space: 'up',
-    l: 'up'
+    l: 'up',
+    k: 'up',
+    m: 'up'
 };
 
 function getStateOfKeys() {
@@ -27,7 +29,9 @@ exports.listen = function(socket) {
             d: k.d,
             w: k.w,
             space: k.space,
-            l: k.l
+            l: k.l,
+            k: k.k,
+            m: k.m
         });
     }
 
@@ -52,6 +56,10 @@ exports.listen = function(socket) {
             stateOfKeys.space = 'down';
         } else if (evt.which === 76) { // l
             stateOfKeys.l = 'down';
+        } else if (evt.which === 75) { // k
+            stateOfKeys.k = 'down';
+        } else if (evt.which === 77) { // m
+            stateOfKeys.m = 'down';
         }
         after();
     });
@@ -69,6 +77,10 @@ exports.listen = function(socket) {
             stateOfKeys.space = 'up';
         } else if (evt.which === 76) { // l
             stateOfKeys.l = 'up';
+        }else if (evt.which === 75) { // k
+            stateOfKeys.k = 'up';
+        } else if (evt.which === 77) { // m
+            stateOfKeys.m = 'up';
         }
         sendState();
     });
